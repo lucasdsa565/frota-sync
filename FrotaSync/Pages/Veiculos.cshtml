@@ -1,0 +1,33 @@
+﻿@page
+@model FrotaSync.Pages.VeiculosModel
+@{
+    ViewData["Title"] = "Veículos";
+}
+
+<h2>Cadastrar Veículo</h2>
+<form method="post" class="row g-2 mb-4">
+    <div class="col-md-2"><input asp-for="NovoVeiculo.Placa" class="form-control" placeholder="Placa" required /></div>
+    <div class="col-md-3"><input asp-for="NovoVeiculo.Modelo" class="form-control" placeholder="Modelo" required /></div>
+    <div class="col-md-2"><input asp-for="NovoVeiculo.Ano" type="number" class="form-control" placeholder="Ano" required /></div>
+    <div class="col-md-2"><input asp-for="NovoVeiculo.Quilometragem" type="number" class="form-control" placeholder="Km Inicial" required /></div>
+    <div class="col-md-2">
+        <select asp-for="NovoVeiculo.CategoriaExigida" class="form-select">
+            <option value="B">Exige CNH B</option>
+            <option value="C">Exige CNH C</option>
+            <option value="D">Exige CNH D</option>
+            <option value="E">Exige CNH E</option>
+        </select>
+    </div>
+    <div class="col-md-1"><button type="submit" class="btn btn-primary w-100">Salvar</button></div>
+</form>
+
+<h3>Frota Cadastrada</h3>
+<table class="table table-striped">
+    <thead><tr><th>Placa</th><th>Modelo</th><th>Ano</th><th>Km</th><th>CNH Exigida</th><th>Status</th></tr></thead>
+    <tbody>
+        @foreach (var v in Model.Veiculos)
+        {
+            <tr><td>@v.Placa</td><td>@v.Modelo</td><td>@v.Ano</td><td>@v.Quilometragem km</td><td>Cat. @v.CategoriaExigida</td><td>@v.Status</td></tr>
+        }
+    </tbody>
+</table>

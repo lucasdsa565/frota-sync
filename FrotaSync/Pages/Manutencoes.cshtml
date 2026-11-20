@@ -1,0 +1,52 @@
+﻿@page
+@model FrotaSync.Pages.ManutencoesModel
+@{
+    ViewData["Title"] = "Manutenções";
+}
+
+<h2>Registrar Manutenção</h2>
+<form method="post" class="row g-2 mb-4">
+    <div class="col-md-4">
+        <select asp-for="NovaManutencao.VeiculoId" class="form-select" required>
+            <option value="">Selecione o Veículo...</option>
+            @foreach (var v in Model.Veiculos)
+            {
+                <option value="@v.Id">@v.Placa - @v.Modelo</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-4"><input asp-for="NovaManutencao.DescricaoServico" class="form-control" placeholder="Descrição do Serviço" required /></div>
+    <div class="col-md-2"><input asp-for="NovaManutencao.ValorEstimado" type="number" step="0.01" class="form-control" placeholder="Valor (R$)" required /></div>
+    <div class="col-md-2"><button type="submit" class="btn btn-warning w-100">Registrar</button></div>
+</form>
+
+<h3>Ordens de Manutenção</h3>
+<table class="table table-striped align-middle">
+    <thead><tr><th>Veículo</th><th>Serviço</th><th>Valor</th><th>Data</th><th>Status</th><th>Ação</th></tr></thead>
+    <tbody>
+        @foreach (var m in Model.Manutencoes)
+        {
+            var veic = Model.Veiculos.FirstOrDefault(v => v.Id == m.VeiculoId)?.Placa ?? m.VeiculoId.ToString();
+            <tr>
+                <td>@veic</td>
+                <td>@m.DescricaoServico</td>
+                <td>R$ @m.ValorEstimado</td>
+                <td>@m.DataSolicitacao.ToString("dd/MM/yyyy")</td>
+                <td>@m.StatusManutencao</td>
+                <td>
+                    @if (m.StatusManutencao != "CONCLUIDA")
+                    {
+                        <form method="post" asp-page-handler="Concluir">
+                            <input type="hidden" name="manutencaoId" value="@m.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-success">Concluir</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Concluída</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

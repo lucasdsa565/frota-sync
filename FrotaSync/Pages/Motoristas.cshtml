@@ -1,0 +1,33 @@
+﻿@page
+@model FrotaSync.Pages.MotoristasModel
+@{
+    ViewData["Title"] = "Motoristas";
+}
+
+<h2>Cadastrar Motorista</h2>
+<form method="post" class="row g-2 mb-4">
+    <div class="col-md-4"><input asp-for="NovoMotorista.Nome" class="form-control" placeholder="Nome Completo" required /></div>
+    <div class="col-md-3"><input asp-for="NovoMotorista.Cnh" class="form-control" placeholder="Número da CNH" required /></div>
+    <div class="col-md-2">
+        <select asp-for="NovoMotorista.CategoriaCnh" class="form-select">
+            <option value="A">CNH A</option>
+            <option value="B">CNH B</option>
+            <option value="C">CNH C</option>
+            <option value="D">CNH D</option>
+            <option value="E">CNH E</option>
+        </select>
+    </div>
+    <div class="col-md-2"><input asp-for="NovoMotorista.ValidadeCnh" type="date" class="form-control" required /></div>
+    <div class="col-md-1"><button type="submit" class="btn btn-primary w-100">Salvar</button></div>
+</form>
+
+<h3>Motoristas Cadastrados</h3>
+<table class="table table-striped">
+    <thead><tr><th>Nome</th><th>CNH</th><th>Categoria</th><th>Validade</th></tr></thead>
+    <tbody>
+        @foreach (var m in Model.Motoristas)
+        {
+            <tr><td>@m.Nome</td><td>@m.Cnh</td><td>Cat. @m.CategoriaCnh</td><td>@m.ValidadeCnh.ToString("dd/MM/yyyy")</td></tr>
+        }
+    </tbody>
+</table>

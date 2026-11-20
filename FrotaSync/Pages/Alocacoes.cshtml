@@ -1,0 +1,72 @@
+﻿@page
+@model FrotaSync.Pages.AlocacoesModel
+@{
+    ViewData["Title"] = "Alocações";
+}
+
+<h2>Nova Alocação</h2>
+
+@if (!string.IsNullOrEmpty(Model.MensagemErro))
+{
+    <div class="alert alert-danger">@Model.MensagemErro</div>
+}
+@if (!string.IsNullOrEmpty(Model.MensagemSucesso))
+{
+    <div class="alert alert-success">@Model.MensagemSucesso</div>
+}
+
+<form method="post" class="row g-2 mb-4">
+    <div class="col-md-5">
+        <select asp-for="VeiculoId" class="form-select" required>
+            <option value="">Selecione o Veículo...</option>
+            @foreach (var v in Model.Veiculos)
+            {
+                <option value="@v.Id">@v.Placa - @v.Modelo [CNH @v.CategoriaExigida] (@v.Status)</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-5">
+        <select asp-for="MotoristaId" class="form-select" required>
+            <option value="">Selecione o Motorista...</option>
+            @foreach (var m in Model.Motoristas)
+            {
+                <option value="@m.Id">@m.Nome (CNH: @m.CategoriaCnh - Val: @m.ValidadeCnh.ToString("dd/MM/yyyy"))</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2"><button type="submit" class="btn btn-success w-100">Alocar</button></div>
+</form>
+
+<h3>Histórico de Alocações</h3>
+<table class="table table-striped align-middle">
+    <thead><tr><th>Veículo</th><th>Motorista</th><th>Início</th><th>Fim</th><th>Status</th><th>Ação</th></tr></thead>
+    <tbody>
+        @foreach (var a in Model.Alocacoes)
+        {
+            var veicObj = Model.Veiculos.FirstOrDefault(v => v.Id == a.VeiculoId);
+            var veic = veicObj?.Placa ?? a.VeiculoId.ToString();
+            var mot = Model.Motoristas.FirstOrDefault(m => m.Id == a.MotoristaId)?.Nome ?? a.MotoristaId.ToString();
+            <tr>
+                <td>@veic</td>
+                <td>@mot</td>
+                <td>@a.DataHoraInicio.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@(a.DataHoraFim.HasValue ? a.DataHoraFim.Value.ToString("dd/MM/yyyy HH:mm") : "-")</td>
+                <td>@a.StatusAlocacao</td>
+                <td>
+                    @if (a.StatusAlocacao == "ATIVA")
+                    {
+                        <form method="post" asp-page-handler="Encerrar" class="d-flex gap-1">
+                            <input type="hidden" name="alocacaoId" value="@a.Id" />
+                            <input type="number" name="novaKm" class="form-control form-control-sm" style="width: 110px;" placeholder="Km Final" min="@(veicObj?.Quilometragem ?? 0)" required />
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Devolver</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Finalizada</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
